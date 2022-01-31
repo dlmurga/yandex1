@@ -94,25 +94,25 @@ resource "yandex_compute_instance" "vm3" {
 }
 
 output "internal_ip_address_vm_jenkins" {
-  value = yandex_compute_instance.vm1.network_interface.0.ip_address
+  value = yandex_compute_instance.vm1.network_interface.ip_address
 }
 
 output "internal_ip_address_vm_nexus" {
-  value = yandex_compute_instance.vm2.network_interface.0.ip_address
+  value = yandex_compute_instance.vm2.network_interface.ip_address
 }
 
 output "internal_ip_address_vm_app" {
-  value = yandex_compute_instance.vm3.network_interface.0.ip_address
+  value = yandex_compute_instance.vm3.network_interface.ip_address
 }
 
 output "external_ip_address_vm_jenkins" {
-  value = yandex_compute_instance.vm1.network_interface.0.nat_ip_address
+  value = yandex_compute_instance.vm1.network_interface.nat_ip_address
 }
 
 output "external_ip_address_vm_nexus" {
-  value = yandex_compute_instance.vm2.network_interface.0.nat_ip_address
+  value = yandex_compute_instance.vm2.network_interface.nat_ip_address
 }
 
 output "external_ip_address_vm_app" {
-  value = yandex_compute_instance.vm3.network_interface.0.nat_ip_address
+  value = yandex_compute_instance.vm3.network_interface.nat_ip_address
 }

@@ -1,0 +1,7 @@
+---
+- name: Install nexus
+  hosts: nexus
+  become: true
+
+  tasks:
+    - name:

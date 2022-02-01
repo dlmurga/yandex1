@@ -30,7 +30,6 @@ provider "yandex" {
 
 resource "yandex_compute_instance" "vm1" {
   name     = "jenkins"
-  count    = 1
   boot_disk {
     initialize_params {
       size     = "15"
@@ -46,12 +45,18 @@ resource "yandex_compute_instance" "vm1" {
     memory = 2
   }
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "${var.user}:${file(${var.private_key})}"
+  }
+  provisioner "local-exec" {
+    command = "echo '[${self.name}]' > ${self.name} && echo ${self.network_interface.0.nat_ip_address} >> ${self.name}"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -u ${var.user} -i ${self.name} --private-key ${var.private_key} ${self.name}.yml"
   }
 }
 resource "yandex_compute_instance" "vm2" {
   name     = "nexus"
-  count    = 1
   boot_disk {
     initialize_params {
       size     = "15"
@@ -67,13 +72,19 @@ resource "yandex_compute_instance" "vm2" {
     memory = 2
   }
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "${var.user}:${file(${var.private_key})}"
+  }
+  provisioner "local-exec" {
+    command = "echo '[${self.name}]' > ${self.name} && echo ${self.network_interface.0.nat_ip_address} >> ${self.name}"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -u ${var.user} -i ${self.name} --private-key ${var.private_key} ${self.name}.yml"
   }
 }
 
 resource "yandex_compute_instance" "vm3" {
   name     = "app"
-  count    = 1
   boot_disk {
     initialize_params {
       size     = "15"
@@ -89,30 +100,37 @@ resource "yandex_compute_instance" "vm3" {
     memory = 2
   }
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "${var.user}:${file(${var.private_key})}"
+  }
+  provisioner "local-exec" {
+    command = "echo '[${self.name}]' > ${self.name} && echo ${self.network_interface.0.nat_ip_address} >> ${self.name}"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -u ${var.user} -i ${self.name} --private-key ${var.private_key} ${self.name}.yml"
   }
 }
 
 output "internal_ip_address_vm_jenkins" {
-  value = yandex_compute_instance.vm1.network_interface.ip_address
+  value = yandex_compute_instance.vm1.network_interface.0.ip_address
 }
 
 output "internal_ip_address_vm_nexus" {
-  value = yandex_compute_instance.vm2.network_interface.ip_address
+  value = yandex_compute_instance.vm2.network_interface.0.ip_address
 }
 
 output "internal_ip_address_vm_app" {
-  value = yandex_compute_instance.vm3.network_interface.ip_address
+  value = yandex_compute_instance.vm3.network_interface.0.ip_address
 }
 
 output "external_ip_address_vm_jenkins" {
-  value = yandex_compute_instance.vm1.network_interface.nat_ip_address
+  value = yandex_compute_instance.vm1.network_interface.0.nat_ip_address
 }
 
 output "external_ip_address_vm_nexus" {
-  value = yandex_compute_instance.vm2.network_interface.nat_ip_address
+  value = yandex_compute_instance.vm2.network_interface.0.nat_ip_address
 }
 
 output "external_ip_address_vm_app" {
-  value = yandex_compute_instance.vm3.network_interface.nat_ip_address
+  value = yandex_compute_instance.vm3.network_interface.0.nat_ip_address
 }

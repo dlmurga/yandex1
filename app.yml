@@ -1,0 +1,40 @@
+---
+- name: Installing nginx
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Ensure required packages are installed
+      apt:
+        name: [ 'python-pip', 'python3-pip', 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent' ]
+        state: present
+        update_cache: yes
+
+    - name: Add an apt signing key for Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add apt repository for Docker stable version
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+
+    - name: Ensure required python modules for docker are installed
+      pip:
+        name:
+          - docker
+        state: present
+
+    - name: Run docker with java app
+      docker_container:
+        name: nginx
+        image: nginx
+        ports:
+          - "80:80"
